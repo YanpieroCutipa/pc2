@@ -10,4 +10,5 @@ public class ApplicationDbContext : IdentityDbContext
     {
     }
     public DbSet<pc2.Models.Contacto> DataContacto {get; set; }
+    public DbSet<pc2.Models.Producto> DataProducto {get; set; }
 }
