@@ -50,7 +50,16 @@ namespace pc2.Controllers
                 return  View("Index",productos);
             } else {
                 var producto = await _context.DataProducto.FindAsync(id);
+                Proforma proforma = new Proforma();
+                proforma.Producto = producto;
+                proforma.Precio = producto.Price;
+                proforma.Cantidad = 1;
+                proforma.UserID = userID;
+                _context.Add(proforma);
+                await _context.SaveChangesAsync();
+                ViewData["Message"] = "Se Agrego al carrito";
                 return RedirectToAction(nameof(Index));
+
             }
         }
 
