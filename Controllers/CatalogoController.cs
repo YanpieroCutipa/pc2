@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc; using Microsoft.Extensions.Logging;
 using pc2.Data;
 using Microsoft.EntityFrameworkCore;
 using pc2.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace pc2.Controllers
 {
@@ -14,11 +15,13 @@ namespace pc2.Controllers
     {
         private readonly ILogger<CatalogoController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CatalogoController(ILogger<CatalogoController> logger,ApplicationDbContext context)
+        public CatalogoController(ILogger<CatalogoController> logger,ApplicationDbContext context,UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _context = context;
+            _userManager = userManager;
         }
 
         public IActionResult Index(string? searchString)
@@ -38,6 +41,19 @@ namespace pc2.Controllers
             }
             return View(objProduct);
         }
+
+        public async Task<IActionResult> Add(int? id){
+            var userID = _userManager.GetUserName(User);
+            if(userID == null){
+                ViewData["Message"] = "Por favor inicie sesión antes de agregar un producto";
+                List<Producto> productos = new List<Producto>();
+                return  View("Index",productos);
+            } else {
+                var producto = await _context.DataProducto.FindAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
